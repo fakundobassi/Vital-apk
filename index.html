@@ -119,13 +119,30 @@
       .nav-ctas { display: none; }
     }
     @media (max-width: 640px) {
+      .header-top-bar { flex-direction: column; gap: 8px; align-items: center; justify-content: center; padding: 12px 5%; text-align: center; }
+      .header-top-bar span { justify-content: center; }
       .hero-title { font-size: 3rem; }
-      .hero-stats { gap: 24px; }
+      .hero-stats { gap: 16px; flex-wrap: wrap; justify-content: center; }
       .features { grid-template-columns: 1fr; }
       .programs-grid { grid-template-columns: 1fr; }
-      .app-promo { flex-direction: column; padding: 40px 24px; }
+      .app-promo { flex-direction: column; padding: 40px 24px; text-align: center; }
+      .app-promo-features { align-items: center; text-align: left; }
       .app-promo-visual { display: none; }
       .section-title { font-size: 2.2rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-info { justify-content: center; flex-direction: column; gap: 12px; }
+      .hero-desc { text-align: center; margin-inline: auto; }
+      .hero-content { align-items: center; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2.4rem; }
+      .hero-stat-value { font-size: 1.8rem; }
+      .section-title { font-size: 1.8rem; }
+      .btn-hero { width: 100%; text-align: center; justify-content: center; }
+      .app-promo-text h2 { font-size: 2.2rem; }
+      .nav-links { display: none; }
+      .navbar { padding: 0 15px; }
+      .hero-content { padding: 40px 5%; }
     }
   </style>
 </head>

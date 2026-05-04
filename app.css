@@ -477,6 +477,17 @@ tbody tr:hover td { background: var(--bg-3); }
   .btn-lg { padding: 12px 20px; }
   .page-body { padding: 12px; }
 }
+@media (max-width: 480px) {
+  .topbar-title { font-size: 1.2rem; }
+  .page-body { padding: 10px; }
+  .card, .stat-card { padding: 16px; }
+  .stat-card-value { font-size: 1.5rem; }
+  .timer-ring { width: 120px; height: 120px; }
+  .timer-digits { font-size: 2.2rem; }
+  .modal-body { padding: 16px; }
+  .modal-header, .modal-footer { padding: 16px; }
+  .bottom-nav-item { font-size: 0.6rem; padding: 4px 8px; }
+}
 
 /* ─── ANIMATIONS ─── */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
