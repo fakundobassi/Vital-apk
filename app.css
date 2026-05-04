@@ -457,7 +457,7 @@ tbody tr:hover td { background: var(--bg-3); }
 
 /* ─── MOBILE ─── */
 @media (max-width: 900px) {
-  .sidebar { transform: translateX(-100%); }
+  .sidebar { transform: translateX(-100%); padding-bottom: 80px; }
   .sidebar.open { transform: translateX(0); box-shadow: var(--shadow); }
   .sidebar-overlay.open { display: block; }
   .hamburger { display: flex; }

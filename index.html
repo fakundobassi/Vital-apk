@@ -322,10 +322,22 @@
     document.addEventListener('DOMContentLoaded', () => {
       try {
         const u = JSON.parse(localStorage.getItem('vg_user'));
-        if (u) document.querySelector('.nav-ctas').innerHTML = `
-          <a href="${u.role==='admin'?'dashboard-admin.html':'dashboard-usuario.html'}" class="btn btn-primary">
-            <i class="fas fa-th-large"></i> Mi panel
-          </a>`;
+        if (u) {
+          const panelUrl = u.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-usuario.html';
+          document.querySelector('.nav-ctas').innerHTML = `
+            <a href="${panelUrl}" class="btn btn-primary">
+              <i class="fas fa-th-large"></i> Mi panel
+            </a>`;
+          
+          // Modificar el menú desplegable (mobile)
+          document.getElementById('mobileNav').innerHTML = `
+            <button class="mobile-nav-close" onclick="document.getElementById('mobileNav').classList.remove('open')"><i class="fas fa-times"></i></button>
+            <a href="index.html">Inicio</a>
+            <a href="hombres.html">Rutinas</a>
+            <a href="${panelUrl}">Mi panel</a>
+            <a href="#" onclick="localStorage.removeItem('vg_user'); location.reload(); return false;" class="btn btn-outline" style="border:none;color:#ff4444;margin-top:20px">Cerrar sesión</a>
+          `;
+        }
       } catch(e) {}
     });
   </script>
