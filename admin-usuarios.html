@@ -48,17 +48,17 @@
       <!-- FILTERS -->
       <div class="card section-gap fade-in" style="padding:16px">
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-          <div class="search-bar" style="flex:1;min-width:200px">
+          <div class="search-bar" style="flex:1 1 100%;min-width:200px">
             <i class="fas fa-search"></i>
             <input type="text" class="search-input" style="width:100%" placeholder="Buscar por nombre o email..." oninput="filterUsers()" id="searchInput">
           </div>
-          <select class="form-select" style="width:160px" onchange="filterUsers()" id="levelFilter">
+          <select class="form-select" style="flex:1;min-width:130px" onchange="filterUsers()" id="levelFilter">
             <option value="">Todos los niveles</option>
             <option value="inicial">Inicial</option>
             <option value="intermedio">Intermedio</option>
             <option value="avanzado">Avanzado</option>
           </select>
-          <select class="form-select" style="width:160px" onchange="filterUsers()" id="routineFilter">
+          <select class="form-select" style="flex:1;min-width:130px" onchange="filterUsers()" id="routineFilter">
             <option value="">Todos</option>
             <option value="assigned">Con rutina</option>
             <option value="unassigned">Sin rutina</option>

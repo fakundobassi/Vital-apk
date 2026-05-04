@@ -49,14 +49,14 @@
       <!-- FILTERS -->
       <div class="card section-gap fade-in" style="padding:16px">
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-          <div class="search-bar" style="flex:1;min-width:200px">
+          <div class="search-bar" style="flex:1 1 100%;min-width:200px">
             <i class="fas fa-search"></i>
             <input type="text" class="search-input" style="width:100%" placeholder="Buscar ejercicio..." oninput="filterExercises()" id="searchInput">
           </div>
-          <select class="form-select" style="width:180px" onchange="filterExercises()" id="muscleFilter">
+          <select class="form-select" style="flex:1;min-width:130px" onchange="filterExercises()" id="muscleFilter">
             <option value="">Todos los músculos</option>
           </select>
-          <select class="form-select" style="width:160px" onchange="filterExercises()" id="equipFilter">
+          <select class="form-select" style="flex:1;min-width:130px" onchange="filterExercises()" id="equipFilter">
             <option value="">Todo el equipo</option>
           </select>
         </div>
