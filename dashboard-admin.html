@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px" id="mainGrid">
+      <div class="dashboard-grid" id="mainGrid">
 
         <!-- RECENT USERS -->
         <div class="card fade-in">
@@ -259,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
     stbody.appendChild(tr);
   });
 
-  if (window.innerWidth < 900) document.getElementById('mainGrid').style.gridTemplateColumns = '1fr';
 });
 
 function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }

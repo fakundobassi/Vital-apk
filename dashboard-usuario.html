@@ -80,7 +80,7 @@
       </div>
 
       <!-- MAIN GRID -->
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px" id="mainGrid">
+      <div class="dashboard-grid" id="mainGrid">
 
         <!-- TODAY'S WORKOUT -->
         <div class="card fade-in">
@@ -252,10 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     </div>`).join('');
 
-  // Mobile grid fix
-  if (window.innerWidth < 900) {
-    document.getElementById('mainGrid').style.gridTemplateColumns = '1fr';
-  }
 });
 
 function openSidebar() {

@@ -188,6 +188,7 @@ ul { list-style: none; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.dashboard-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
@@ -466,6 +467,7 @@ tbody tr:hover td { background: var(--bg-3); }
   .page-body { padding: 16px; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .search-input { width: 100%; }
   .stat-card-value { font-size: 1.8rem; }
