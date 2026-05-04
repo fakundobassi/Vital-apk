@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin – Vital Gym</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="img/transparent-Photoroom.png" alt="Vital Gym">
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Admin</div>
+      <a href="dashboard-admin.html" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+      <a href="admin-usuarios.html" class="nav-item"><i class="fas fa-users"></i><span>Usuarios</span></a>
+      <a href="admin-rutinas.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Rutinas</span></a>
+      <a href="admin-ejercicios.html" class="nav-item"><i class="fas fa-dumbbell"></i><span>Ejercicios</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebarUser"></div>
+      <button class="btn-logout" onclick="VG.logout()"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+        <span class="topbar-title">DASHBOARD</span>
+      </div>
+      <div class="topbar-right">
+        <span style="font-size:0.75rem;color:var(--text-3)">Panel de administración</span>
+        <div class="topbar-avatar" id="topbarAvatar">A</div>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <!-- HEADER -->
+      <div class="section-gap fade-in" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <h2 style="font-family:var(--font-head);font-size:2rem;color:var(--text-1);letter-spacing:1px">PANEL DE CONTROL</h2>
+          <p style="color:var(--text-3);margin-top:4px;font-size:0.85rem" id="dateLabel"></p>
+        </div>
+        <a href="admin-usuarios.html" class="btn btn-primary"><i class="fas fa-user-plus"></i> Nuevo usuario</a>
+      </div>
+
+      <!-- STATS -->
+      <div class="grid-4 section-gap">
+        <div class="stat-card fade-in delay-1">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-card-value" id="statUsers">0</div>
+          <div class="stat-card-label">Usuarios activos</div>
+        </div>
+        <div class="stat-card fade-in delay-2">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-card-value" id="statSessions">0</div>
+          <div class="stat-card-label">Sesiones totales</div>
+        </div>
+        <div class="stat-card fade-in delay-3">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-clipboard-list"></i></div>
+          <div class="stat-card-value" id="statRoutines">0</div>
+          <div class="stat-card-label">Rutinas creadas</div>
+        </div>
+        <div class="stat-card fade-in delay-4">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-dumbbell"></i></div>
+          <div class="stat-card-value" id="statExercises">0</div>
+          <div class="stat-card-label">Ejercicios en DB</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px" id="mainGrid">
+
+        <!-- RECENT USERS -->
+        <div class="card fade-in">
+          <div class="card-header">
+            <div class="card-header-title"><i class="fas fa-users" style="color:var(--primary)"></i> Usuarios recientes</div>
+            <a href="admin-usuarios.html" class="btn btn-outline btn-sm">Ver todos</a>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr>
+                <th>Usuario</th><th>Nivel</th><th>Rutina</th><th>Sesiones</th><th>Acciones</th>
+              </tr></thead>
+              <tbody id="usersTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- QUICK ACTIONS -->
+          <div class="card fade-in delay-1">
+            <div class="card-title mb-16">Acciones rápidas</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <a href="admin-usuarios.html" class="btn btn-outline btn-block" style="justify-content:flex-start;gap:12px">
+                <i class="fas fa-user-plus" style="color:var(--primary)"></i> Crear nuevo usuario
+              </a>
+              <a href="admin-rutinas.html" class="btn btn-outline btn-block" style="justify-content:flex-start;gap:12px">
+                <i class="fas fa-plus-circle" style="color:var(--primary)"></i> Crear nueva rutina
+              </a>
+              <a href="admin-ejercicios.html" class="btn btn-outline btn-block" style="justify-content:flex-start;gap:12px">
+                <i class="fas fa-dumbbell" style="color:var(--primary)"></i> Agregar ejercicio
+              </a>
+            </div>
+          </div>
+
+          <!-- ACTIVITY BY DAY -->
+          <div class="card fade-in delay-2">
+            <div class="card-title mb-16"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Actividad semanal</div>
+            <div class="week-chart" id="weekChart" style="height:100px"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.72rem;color:var(--text-4)">
+              <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            </div>
+          </div>
+
+          <!-- USER LEVEL DISTRIBUTION -->
+          <div class="card fade-in delay-3">
+            <div class="card-title mb-16">Distribución por nivel</div>
+            <div id="levelDist" style="display:flex;flex-direction:column;gap:12px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESSIONS LOG -->
+      <div class="card mt-20 fade-in">
+        <div class="card-header">
+          <div class="card-header-title"><i class="fas fa-history" style="color:var(--primary)"></i> Últimas sesiones registradas</div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr>
+              <th>Usuario</th><th>Rutina</th><th>Día</th><th>Fecha</th><th>Duración</th><th>Estado</th>
+            </tr></thead>
+            <tbody id="sessionsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="dashboard-admin.html" class="bottom-nav-item active"><i class="fas fa-th-large"></i><span>Panel</span></a>
+      <a href="admin-usuarios.html" class="bottom-nav-item"><i class="fas fa-users"></i><span>Usuarios</span></a>
+      <a href="admin-rutinas.html" class="bottom-nav-item"><i class="fas fa-calendar-alt"></i><span>Rutinas</span></a>
+      <a href="admin-ejercicios.html" class="bottom-nav-item"><i class="fas fa-dumbbell"></i><span>Ejercicios</span></a>
+    </div>
+  </nav>
+</div>
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  VG.init();
+  VG.guard();
+  VG.adminGuard();
+
+  const u = VG.me();
+  const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('topbarAvatar').textContent = initials;
+  document.getElementById('sidebarUser').innerHTML = `
+    <div class="sidebar-user-avatar">${initials}</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name">${u.name}</div>
+      <div class="sidebar-user-role">Administrador</div>
+    </div>`;
+  document.getElementById('dateLabel').textContent = new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  const users = VG.users().filter(u => u.role !== 'admin');
+  const sessions = VG.sessions();
+  const routines = VG.routines();
+  const exercises = VG.exercises();
+
+  document.getElementById('statUsers').textContent = users.length;
+  document.getElementById('statSessions').textContent = sessions.length;
+  document.getElementById('statRoutines').textContent = routines.length;
+  document.getElementById('statExercises').textContent = exercises.length;
+
+  // Users table
+  const tbody = document.getElementById('usersTable');
+  users.slice(0,6).forEach(usr => {
+    const initials2 = usr.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const userSessions = sessions.filter(s=>s.userId===usr.id);
+    const routine = usr.routineId ? VG.getRoutine(usr.routineId) : null;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="avatar-sm">${initials2}</div>
+        <div><div class="table-name">${usr.name}</div><div style="font-size:0.75rem;color:var(--text-4)">${usr.email}</div></div>
+      </div></td>
+      <td><span class="badge badge-gray">${VG.levelLabel(usr.level)||'—'}</span></td>
+      <td style="font-size:0.82rem;color:var(--text-3)">${routine ? routine.name : '<span style="color:var(--text-4)">Sin asignar</span>'}</td>
+      <td style="font-family:var(--font-head);font-size:1rem;color:var(--text-1)">${userSessions.length}</td>
+      <td><div class="table-actions">
+        <a href="admin-usuarios.html" class="btn btn-icon btn-ghost btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Activity chart
+  const weekData = [0,0,0,0,0,0,0];
+  const now = new Date();
+  sessions.forEach(s => {
+    const d = new Date(s.date);
+    const diff = Math.floor((now-d)/86400000);
+    if (diff < 7) weekData[(d.getDay()+6)%7]++;
+  });
+  const max = Math.max(...weekData, 1);
+  document.getElementById('weekChart').innerHTML = weekData.map(v => `
+    <div class="week-col">
+      <div class="week-bar-wrap">
+        <div class="week-bar${v>0?' active':''}" style="height:${Math.round((v/max)*100)}%"></div>
+      </div>
+    </div>`).join('');
+
+  // Level distribution
+  const levelCounts = { inicial:0, intermedio:0, avanzado:0 };
+  users.forEach(u => { if (levelCounts[u.level]!==undefined) levelCounts[u.level]++; });
+  const total = users.length || 1;
+  const colors = { inicial:'var(--info)', intermedio:'var(--warning)', avanzado:'var(--primary)' };
+  document.getElementById('levelDist').innerHTML = Object.entries(levelCounts).map(([lvl,cnt]) => `
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:6px">
+        <span style="color:var(--text-2)">${VG.levelLabel(lvl)}</span>
+        <span style="color:var(--text-3)">${cnt} usuarios</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width:${Math.round(cnt/total*100)}%;background:${colors[lvl]}"></div>
+      </div>
+    </div>`).join('');
+
+  // Sessions table
+  const stbody = document.getElementById('sessionsTable');
+  sessions.slice().reverse().slice(0,8).forEach(s => {
+    const usr = VG.getUser(s.userId);
+    const routine = VG.getRoutine(s.routineId);
+    const day = routine?.days?.find(d=>d.id===s.dayId);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="table-name">${usr?.name||'—'}</td>
+      <td style="font-size:0.82rem;color:var(--text-3)">${routine?.name||'—'}</td>
+      <td style="font-size:0.82rem;color:var(--text-3)">${day?.name||'—'}</td>
+      <td style="font-size:0.82rem">${VG.fmtDate(s.date)}</td>
+      <td style="font-size:0.82rem;color:var(--text-2)">${s.duration ? s.duration+' min' : '—'}</td>
+      <td><span class="badge ${s.completed?'badge-green':'badge-yellow'}">${s.completed?'Completada':'En progreso'}</span></td>`;
+    stbody.appendChild(tr);
+  });
+
+  if (window.innerWidth < 900) document.getElementById('mainGrid').style.gridTemplateColumns = '1fr';
+});
+
+function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+</script>
+</body>
+</html>

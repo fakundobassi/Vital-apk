@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión – Vital Gym</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-0); }
+    .auth-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .auth-box { width: 100%; max-width: 420px; }
+    .auth-logo { display: flex; align-items: center; justify-content: center; margin-bottom: 36px; }
+    .auth-logo img { height: 56px; }
+    .auth-title { font-family: var(--font-head); font-size: 2.2rem; color: var(--text-1); margin-bottom: 6px; letter-spacing: 1px; }
+    .auth-subtitle { color: var(--text-3); font-size: 0.875rem; margin-bottom: 32px; }
+    .auth-form { display: flex; flex-direction: column; gap: 18px; }
+    .input-wrapper { position: relative; }
+    .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-4); font-size: 0.9rem; }
+    .auth-input {
+      width: 100%; padding: 13px 14px 13px 42px;
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-1);
+      font-size: 0.9rem; font-family: var(--font-body);
+      outline: none; transition: border-color var(--transition);
+    }
+    .auth-input::placeholder { color: var(--text-4); }
+    .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-4); cursor: pointer; padding: 4px; }
+    .pw-toggle:hover { color: var(--text-2); }
+    .auth-options { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
+    .auth-check { display: flex; align-items: center; gap: 8px; color: var(--text-3); cursor: pointer; }
+    .auth-check input { accent-color: var(--primary); }
+    .auth-link { color: var(--primary); font-weight: 500; }
+    .auth-link:hover { color: var(--primary-dark); }
+    .btn-auth {
+      width: 100%; padding: 14px;
+      background: var(--primary); border: none; border-radius: var(--radius-sm);
+      color: #fff; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.5px;
+      cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-auth:hover { background: var(--primary-dark); box-shadow: 0 4px 20px rgba(255,0,0,0.3); }
+    .auth-divider { display: flex; align-items: center; gap: 12px; color: var(--text-4); font-size: 0.8rem; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .auth-bottom { text-align: center; font-size: 0.85rem; color: var(--text-3); }
+    .error-msg { background: var(--danger-bg); border: 1px solid rgba(239,68,68,0.3); color: var(--danger); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.83rem; display: none; align-items: center; gap: 8px; }
+    .error-msg.show { display: flex; }
+    .demo-accounts { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 0.78rem; }
+    .demo-accounts h4 { color: var(--text-2); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .demo-accounts h4 i { color: var(--primary); }
+    .demo-row { display: flex; justify-content: space-between; padding: 4px 0; color: var(--text-3); }
+    .demo-row span:last-child { color: var(--text-4); font-family: monospace; }
+
+    .auth-hero { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .auth-hero img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4); position: absolute; inset: 0; }
+    .auth-hero-content { position: relative; z-index: 1; text-align: center; padding: 40px; }
+    .auth-hero-title { font-family: var(--font-head); font-size: 3.5rem; color: #fff; margin-bottom: 12px; line-height: 1; }
+    .auth-hero-title span { color: var(--primary); }
+    .auth-hero-desc { color: rgba(255,255,255,0.6); max-width: 340px; line-height: 1.7; }
+    @media (max-width: 768px) { .auth-hero { display: none; } .auth-panel { background: var(--bg-1); } }
+  </style>
+</head>
+<body>
+  <div class="auth-panel">
+    <div class="auth-box fade-in">
+      <div class="auth-logo">
+        <img src="img/transparent-Photoroom.png" alt="Vital Gym">
+      </div>
+
+      <h1 class="auth-title">BIENVENIDO</h1>
+      <p class="auth-subtitle">Iniciá sesión para acceder a tu rutina personalizada</p>
+
+      <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+        <div class="error-msg" id="errorMsg">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="errorText">Email o contraseña incorrectos</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="email" class="auth-input" placeholder="tu@email.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="password" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="pw-toggle" onclick="togglePw()"><i class="fas fa-eye" id="pwIcon"></i></button>
+          </div>
+        </div>
+
+        <div class="auth-options">
+          <label class="auth-check">
+            <input type="checkbox"> Recordarme
+          </label>
+          <a href="#" class="auth-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="btn-auth" id="submitBtn">
+          <i class="fas fa-sign-in-alt"></i> Ingresar
+        </button>
+
+        <div class="auth-divider">o</div>
+
+        <div class="demo-accounts">
+          <h4><i class="fas fa-info-circle"></i> Cuentas demo</h4>
+          <div class="demo-row"><span>👑 Admin:</span> <span>admin@vitalgym.com / admin123</span></div>
+          <div class="demo-row"><span>🏋️ Usuario:</span> <span>juan@vitalgym.com / 1234</span></div>
+        </div>
+
+        <div class="auth-bottom">
+          ¿No tenés cuenta? <a href="register.html" class="auth-link">Registrarte gratis</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="auth-hero">
+    <img src="img/fondo1.jpg" alt="Vital Gym">
+    <div class="auth-hero-content">
+      <div class="auth-hero-title">VITAL<br><span>GYM</span></div>
+      <p class="auth-hero-desc">Tu mejor versión empieza con el primer paso. Entrenamos contigo.</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      VG.init();
+      const u = VG.me();
+      if (u) location.href = u.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-usuario.html';
+    });
+
+    function togglePw() {
+      const inp = document.getElementById('password');
+      const icon = document.getElementById('pwIcon');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      icon.className = inp.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ingresando...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        const email = document.getElementById('email').value.trim();
+        const pw = document.getElementById('password').value;
+        const res = VG.login(email, pw);
+        if (res.ok) {
+          btn.innerHTML = '<i class="fas fa-check"></i> Ingresado!';
+          setTimeout(() => {
+            location.href = res.user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-usuario.html';
+          }, 400);
+        } else {
+          const err = document.getElementById('errorMsg');
+          document.getElementById('errorText').textContent = res.err;
+          err.classList.add('show');
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+          btn.disabled = false;
+        }
+      }, 600);
+    }
+  </script>
+</body>
+</html>

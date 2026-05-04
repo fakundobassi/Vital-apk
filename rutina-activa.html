@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Rutina – Vital Gym</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="img/transparent-Photoroom.png" alt="Vital Gym"></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a href="dashboard-usuario.html" class="nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="rutina-activa.html" class="nav-item active"><i class="fas fa-dumbbell"></i><span>Mi Rutina</span></a>
+      <a href="progreso.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Progreso</span></a>
+      <div class="nav-divider"></div>
+      <a href="perfil.html" class="nav-item"><i class="fas fa-user"></i><span>Mi Perfil</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebarUser"></div>
+      <button class="btn-logout" onclick="VG.logout()"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+        <span class="topbar-title">MI RUTINA</span>
+      </div>
+      <div class="topbar-right">
+        <div id="sessionTimer" style="font-family:var(--font-head);font-size:1.2rem;color:var(--primary);display:none">00:00</div>
+        <div class="topbar-avatar" id="topbarAvatar"></div>
+      </div>
+    </header>
+
+    <div class="page-body" id="pageBody">
+      <!-- Content injected by JS -->
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="dashboard-usuario.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="rutina-activa.html" class="bottom-nav-item active"><i class="fas fa-dumbbell"></i><span>Rutina</span></a>
+      <a href="progreso.html" class="bottom-nav-item"><i class="fas fa-chart-line"></i><span>Progreso</span></a>
+      <a href="perfil.html" class="bottom-nav-item"><i class="fas fa-user"></i><span>Perfil</span></a>
+    </div>
+  </nav>
+</div>
+
+<!-- REST TIMER OVERLAY -->
+<div class="timer-overlay" id="timerOverlay">
+  <div class="timer-box">
+    <div class="timer-label"><i class="fas fa-clock"></i> TIEMPO DE DESCANSO</div>
+    <div class="timer-ring">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="timer-ring-bg" cx="80" cy="80" r="68"/>
+        <circle class="timer-ring-fill" id="timerCircle" cx="80" cy="80" r="68"
+          stroke-dasharray="427" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-digits" id="timerDigits">60</div>
+    </div>
+    <p style="color:var(--text-3);font-size:0.85rem;margin-bottom:16px">Descansá antes de la próxima serie</p>
+    <button class="btn btn-outline timer-skip" onclick="skipTimer()">Saltar descanso <i class="fas fa-forward"></i></button>
+  </div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="videoTitle">Ejercicio</div>
+      <button class="modal-close" onclick="closeVideo()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <div style="position:relative;background:#000;aspect-ratio:16/9;overflow:hidden">
+
+        <!-- Estado 1: Cargando -->
+        <div id="vidLoading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;background:#000">
+          <i class="fas fa-spinner fa-spin" style="color:#FF0000;font-size:2.2rem"></i>
+        </div>
+
+        <!-- Estado 2: Iframe (video embebible) -->
+        <iframe id="videoFrame"
+          style="position:absolute;inset:0;width:100%;height:100%;border:none;display:none;z-index:2"
+          src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+
+        <!-- Estado 3: Fallback (embedding bloqueado) -->
+        <div id="vidFallback" onclick="openVideoExternal()"
+          style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:2">
+          <img id="videoThumb" src="" alt=""
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.55">
+          <div style="position:relative;z-index:1;text-align:center;padding:20px">
+            <div style="background:rgba(0,0,0,0.7);border-radius:50%;width:68px;height:68px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+              <i class="fab fa-youtube" style="color:#FF0000;font-size:2rem"></i>
+            </div>
+            <div style="background:rgba(0,0,0,0.75);color:#fff;padding:8px 18px;border-radius:8px;font-size:0.82rem;line-height:1.5">
+              Este video no permite reproducción aquí.<br>
+              <strong>Tocá para abrirlo en YouTube ↗</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--bg-2)">
+        <div style="font-size:0.82rem;color:var(--text-3)" id="videoExDesc"></div>
+        <a id="videoYtLink" href="#" target="_blank" rel="noopener noreferrer"
+          class="btn btn-sm" style="background:var(--danger-bg);color:#FF0000;border:none;flex-shrink:0;gap:6px">
+          <i class="fab fa-youtube"></i> Abrir en YouTube
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG SETS MODAL -->
+<div class="modal-overlay" id="logModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="logExName">Registrar series</div>
+      <button class="modal-close" onclick="closeLog()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.82rem;color:var(--text-3);margin-bottom:16px">Registrá el peso y repeticiones de cada serie</p>
+      <div id="logSets" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeLog()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSets()"><i class="fas fa-save"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script src="app.js"></script>
+<script>
+let activeDay = 0;
+let completedExercises = new Set();
+let sessionStartTime = null;
+let sessionTimerInterval = null;
+let timerInterval = null;
+let timerTotal = 0;
+let timerLeft = 0;
+let currentLogExId = null;
+let routine = null;
+let user = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  VG.init();
+  VG.guard();
+  user = VG.me();
+  if (user.role === 'admin') return location.href = 'dashboard-admin.html';
+
+  const initials = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('topbarAvatar').textContent = initials;
+  document.getElementById('sidebarUser').innerHTML = `
+    <div class="sidebar-user-avatar">${initials}</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name">${user.name}</div>
+      <div class="sidebar-user-role">${VG.levelLabel(user.level)||'Miembro'}</div>
+    </div>`;
+
+  routine = user.routineId ? VG.getRoutine(user.routineId) : null;
+
+  if (!routine) {
+    document.getElementById('pageBody').innerHTML = `
+      <div class="card" style="text-align:center;padding:60px 24px">
+        <i class="fas fa-clipboard-list" style="font-size:3rem;color:var(--text-4);display:block;margin-bottom:16px"></i>
+        <h3 style="font-family:var(--font-head);font-size:1.5rem;color:var(--text-1);margin-bottom:8px">SIN RUTINA ASIGNADA</h3>
+        <p style="color:var(--text-3);max-width:380px;margin:0 auto 24px">Tu instructor aún no te asignó una rutina personalizada. Consultale para que configure tu plan de entrenamiento.</p>
+        <a href="dashboard-usuario.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+      </div>`;
+    return;
+  }
+
+  const sessions = VG.userSessions(user.id);
+  activeDay = sessions.length % routine.days.length;
+  renderPage();
+});
+
+function renderPage() {
+  const day = routine.days[activeDay];
+  const exCount = day.exercises.length;
+  const doneCount = completedExercises.size;
+  const pct = Math.round(doneCount / exCount * 100);
+
+  let html = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px" class="fade-in">
+      <div>
+        <h2 style="font-family:var(--font-head);font-size:1.8rem;color:var(--text-1);letter-spacing:1px">${routine.name}</h2>
+        <p style="color:var(--text-3);font-size:0.85rem;margin-top:4px">${new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})}</p>
+      </div>
+      ${sessionStartTime ? `<button class="btn btn-danger" onclick="finishWorkout()"><i class="fas fa-flag-checkered"></i> Finalizar sesión</button>` :
+        `<button class="btn btn-primary" onclick="startWorkout()"><i class="fas fa-play"></i> Iniciar sesión</button>`}
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="card section-gap fade-in">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:0.85rem;color:var(--text-2)">Progreso del entrenamiento</span>
+        <span style="font-family:var(--font-head);font-size:1.1rem;color:var(--primary)">${doneCount}/${exCount} ejercicios</span>
+      </div>
+      <div class="progress-bar-container" style="height:8px">
+        <div class="progress-bar-fill" style="width:${pct}%;transition:width 0.5s ease"></div>
+      </div>
+      ${pct===100 ? `<div class="alert alert-success mt-12"><i class="fas fa-trophy"></i> ¡Entrenamiento completado! Guardá tu sesión.</div>` : ''}
+    </div>
+
+    <!-- DAY TABS -->
+    <div class="day-tabs fade-in">
+      ${routine.days.map((d,i) => `
+        <button class="day-tab${i===activeDay?' active':''}" onclick="switchDay(${i})">${d.name}</button>
+      `).join('')}
+    </div>
+
+    <!-- EXERCISES -->
+    <div class="card fade-in">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="fas fa-list-ul" style="color:var(--primary)"></i> ${day.name}</div>
+          <div class="card-subtitle">${exCount} ejercicios · ${day.exercises.reduce((a,e)=>a+(e.sets||1),0)} series totales</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="exerciseList">`;
+
+  day.exercises.forEach((ex, idx) => {
+    const e = VG.getExercise(ex.exerciseId);
+    if (!e) return;
+    const done = completedExercises.has(idx);
+    html += `
+      <div class="exercise-card${done?' completed':''}" id="exCard-${idx}">
+        <div class="ex-check" onclick="toggleExercise(${idx}, ${ex.rest||60})" id="exCheck-${idx}">
+          <i class="fas fa-check" style="font-size:0.75rem"></i>
+        </div>
+        <div class="ex-info">
+          <div class="ex-name">${e.name}</div>
+          <div class="ex-meta">
+            <i class="fas fa-layer-group" style="color:var(--primary);margin-right:4px"></i>
+            ${ex.duration ? ex.duration : `${ex.sets} series × ${ex.reps} reps`}
+            ${ex.rest ? ` · <i class="fas fa-clock" style="margin:0 3px"></i>${ex.rest}s descanso` : ''}
+            <span class="tag" style="margin-left:8px">${e.muscleGroup}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="ex-video-btn" onclick="openVideo('${ex.exerciseId}')"><i class="fas fa-play"></i> Ver</button>
+          <button class="ex-video-btn" onclick="openLog(${idx}, '${ex.exerciseId}', ${ex.sets||1})" title="Registrar pesos"><i class="fas fa-pencil-alt"></i></button>
+        </div>
+      </div>`;
+  });
+
+  html += `</div></div>
+
+    <!-- TIPS -->
+    <div class="card mt-20 fade-in" style="background:var(--primary-glow);border-color:rgba(255,0,0,0.2)">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <i class="fas fa-lightbulb" style="color:var(--primary);font-size:1.2rem;margin-top:2px"></i>
+        <div>
+          <div style="font-weight:600;color:var(--text-1);margin-bottom:4px">Consejo del día</div>
+          <div style="font-size:0.85rem;color:var(--text-2)">Mantené una técnica correcta en cada repetición. Es mejor bajar el peso y hacer el movimiento bien que levantar más cargando mal.</div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('pageBody').innerHTML = html;
+}
+
+function switchDay(idx) {
+  activeDay = idx;
+  completedExercises.clear();
+  renderPage();
+}
+
+function toggleExercise(idx, restSecs) {
+  if (!sessionStartTime) {
+    showToast('Presioná "Iniciar sesión" primero', 'error');
+    return;
+  }
+  if (completedExercises.has(idx)) {
+    completedExercises.delete(idx);
+  } else {
+    completedExercises.add(idx);
+    if (restSecs > 0) startRestTimer(restSecs);
+    showToast('¡Ejercicio completado! Descansá.');
+  }
+  renderPage();
+  if (sessionStartTime) {
+    document.querySelector('.btn-danger') && null; // keep timer
+    resumeSessionTimer();
+  }
+}
+
+function startWorkout() {
+  sessionStartTime = Date.now();
+  const el = document.getElementById('sessionTimer');
+  el.style.display = 'block';
+  sessionTimerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now()-sessionStartTime)/1000);
+    const m = Math.floor(elapsed/60).toString().padStart(2,'0');
+    const s = (elapsed%60).toString().padStart(2,'0');
+    el.textContent = `${m}:${s}`;
+  }, 1000);
+  renderPage();
+  showToast('¡Sesión iniciada! A entrenar.');
+}
+
+function resumeSessionTimer() {
+  // Already running
+}
+
+function finishWorkout() {
+  if (!sessionStartTime) return;
+  clearInterval(sessionTimerInterval);
+  const duration = Math.round((Date.now()-sessionStartTime)/60000);
+  const day = routine.days[activeDay];
+  VG.addSession({ userId: user.id, routineId: routine.id, dayId: day.id, duration, completed: true });
+  VG.saveUser(user.id, { streak: (user.streak||0)+1 });
+  document.getElementById('sessionTimer').style.display = 'none';
+  sessionStartTime = null;
+  showToast('🎉 ¡Sesión guardada! Excelente trabajo.');
+  setTimeout(() => location.href = 'progreso.html', 1500);
+}
+
+function startRestTimer(secs) {
+  timerTotal = secs;
+  timerLeft = secs;
+  const overlay = document.getElementById('timerOverlay');
+  const circle = document.getElementById('timerCircle');
+  const digits = document.getElementById('timerDigits');
+  const circumference = 427;
+  overlay.classList.add('open');
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerLeft--;
+    digits.textContent = timerLeft;
+    const offset = circumference * (1 - timerLeft/timerTotal);
+    circle.style.strokeDashoffset = offset;
+    if (timerLeft <= 0) {
+      clearInterval(timerInterval);
+      overlay.classList.remove('open');
+      showToast('¡Tiempo! Comenzá la próxima serie.');
+    }
+  }, 1000);
+}
+
+function skipTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timerOverlay').classList.remove('open');
+}
+
+let currentVideoUrl = null;
+let ytMsgHandler = null;
+let ytLoadTimeout = null;
+
+function openVideo(exerciseId) {
+  const e = VG.getExercise(exerciseId);
+  if (!e) return;
+
+  const id = VG.youtubeId(e.videoUrl);
+  currentVideoUrl = VG.youtubeWatchUrl(e.videoUrl);
+
+  document.getElementById('videoTitle').textContent = e.name;
+  document.getElementById('videoExDesc').textContent = e.muscleGroup ? `${e.muscleGroup}${e.equipment ? ' · ' + e.equipment : ''}` : '';
+  document.getElementById('videoThumb').src = VG.thumbnailUrl(e.videoUrl) || '';
+  document.getElementById('videoYtLink').href = currentVideoUrl || '#';
+
+  setVideoState('loading');
+
+  if (id) {
+    const frame = document.getElementById('videoFrame');
+    frame.src = `https://www.youtube-nocookie.com/embed/${id}?enablejsapi=1&rel=0&playsinline=1`;
+
+    // Limpiar listener anterior
+    if (ytMsgHandler) window.removeEventListener('message', ytMsgHandler);
+    clearTimeout(ytLoadTimeout);
+
+    ytMsgHandler = (evt) => {
+      if (!String(evt.origin).includes('youtube')) return;
+      try {
+        const data = JSON.parse(evt.data);
+        if (data.event === 'onError' && [100, 101, 150, 151, 153].includes(data.info)) {
+          setVideoState('fallback');
+        } else if (data.event === 'onReady') {
+          setVideoState('player');
+        }
+      } catch { /* mensaje de otro origen */ }
+    };
+    window.addEventListener('message', ytMsgHandler);
+
+    // Si YouTube no responde en 7s, mostrar fallback
+    ytLoadTimeout = setTimeout(() => setVideoState('fallback'), 7000);
+  } else {
+    setVideoState('fallback');
+  }
+
+  document.getElementById('videoModal').classList.add('open');
+}
+
+function setVideoState(state) {
+  clearTimeout(ytLoadTimeout);
+  document.getElementById('vidLoading').style.display  = state === 'loading'  ? 'flex'  : 'none';
+  document.getElementById('videoFrame').style.display  = state === 'player'   ? 'block' : 'none';
+  document.getElementById('vidFallback').style.display = state === 'fallback' ? 'flex'  : 'none';
+}
+
+function openVideoExternal() {
+  if (currentVideoUrl) window.open(currentVideoUrl, '_blank', 'noopener,noreferrer');
+}
+
+function closeVideo() {
+  document.getElementById('videoModal').classList.remove('open');
+  clearTimeout(ytLoadTimeout);
+  if (ytMsgHandler) { window.removeEventListener('message', ytMsgHandler); ytMsgHandler = null; }
+  document.getElementById('videoFrame').src = '';
+  currentVideoUrl = null;
+}
+
+function openLog(idx, exerciseId, sets) {
+  const e = VG.getExercise(exerciseId);
+  currentLogExId = exerciseId;
+  document.getElementById('logExName').textContent = e ? e.name : 'Ejercicio';
+  let html = '';
+  for (let i = 1; i <= sets; i++) {
+    html += `<div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:10px;align-items:center">
+      <span style="font-size:0.8rem;color:var(--text-3);white-space:nowrap">Serie ${i}</span>
+      <div class="form-group">
+        <label class="form-label">Peso (kg)</label>
+        <input type="number" class="form-input log-weight" placeholder="0" min="0" step="0.5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reps</label>
+        <input type="number" class="form-input log-reps" placeholder="0" min="0">
+      </div>
+    </div>`;
+  }
+  document.getElementById('logSets').innerHTML = html;
+  document.getElementById('logModal').classList.add('open');
+}
+
+function closeLog() { document.getElementById('logModal').classList.remove('open'); }
+
+function saveSets() {
+  closeLog();
+  showToast('Pesos registrados correctamente.');
+}
+
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  const icon = toast.querySelector('i');
+  document.getElementById('toastMsg').textContent = msg;
+  icon.className = type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+  toast.className = `toast show ${type}`;
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+</script>
+</body>
+</html>

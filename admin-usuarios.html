@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios – Vital Gym Admin</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="img/transparent-Photoroom.png" alt="Vital Gym"></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Admin</div>
+      <a href="dashboard-admin.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+      <a href="admin-usuarios.html" class="nav-item active"><i class="fas fa-users"></i><span>Usuarios</span></a>
+      <a href="admin-rutinas.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Rutinas</span></a>
+      <a href="admin-ejercicios.html" class="nav-item"><i class="fas fa-dumbbell"></i><span>Ejercicios</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebarUser"></div>
+      <button class="btn-logout" onclick="VG.logout()"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+        <span class="topbar-title">USUARIOS</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-avatar" id="topbarAvatar">A</div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <div class="section-gap fade-in" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <h2 style="font-family:var(--font-head);font-size:2rem;color:var(--text-1);letter-spacing:1px">GESTIÓN DE USUARIOS</h2>
+          <p style="color:var(--text-3);font-size:0.85rem;margin-top:4px" id="userCount"></p>
+        </div>
+        <button class="btn btn-primary" onclick="openCreateModal()"><i class="fas fa-user-plus"></i> Nuevo usuario</button>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="card section-gap fade-in" style="padding:16px">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <div class="search-bar" style="flex:1;min-width:200px">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" style="width:100%" placeholder="Buscar por nombre o email..." oninput="filterUsers()" id="searchInput">
+          </div>
+          <select class="form-select" style="width:160px" onchange="filterUsers()" id="levelFilter">
+            <option value="">Todos los niveles</option>
+            <option value="inicial">Inicial</option>
+            <option value="intermedio">Intermedio</option>
+            <option value="avanzado">Avanzado</option>
+          </select>
+          <select class="form-select" style="width:160px" onchange="filterUsers()" id="routineFilter">
+            <option value="">Todos</option>
+            <option value="assigned">Con rutina</option>
+            <option value="unassigned">Sin rutina</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="card fade-in">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr>
+              <th>Usuario</th><th>Nivel</th><th>Objetivo</th><th>Rutina asignada</th><th>Sesiones</th><th>Miembro desde</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="usersTable"></tbody>
+          </table>
+        </div>
+        <div id="emptyUsers" style="display:none" class="empty-state"><i class="fas fa-users-slash"></i><h3>Sin resultados</h3><p>No se encontraron usuarios con esos criterios.</p></div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="dashboard-admin.html" class="bottom-nav-item"><i class="fas fa-th-large"></i><span>Panel</span></a>
+      <a href="admin-usuarios.html" class="bottom-nav-item active"><i class="fas fa-users"></i><span>Usuarios</span></a>
+      <a href="admin-rutinas.html" class="bottom-nav-item"><i class="fas fa-calendar-alt"></i><span>Rutinas</span></a>
+      <a href="admin-ejercicios.html" class="bottom-nav-item"><i class="fas fa-dumbbell"></i><span>Ejercicios</span></a>
+    </div>
+  </nav>
+</div>
+
+<!-- CREATE/EDIT MODAL -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Nuevo usuario</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editUserId">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Nombre completo *</label><input type="text" id="uName" class="form-input" placeholder="Nombre y apellido"></div>
+          <div class="form-group"><label class="form-label">Email *</label><input type="email" id="uEmail" class="form-input" placeholder="email@example.com"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Contraseña *</label><input type="password" id="uPassword" class="form-input" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-group"><label class="form-label">Género</label>
+            <select id="uGender" class="form-select"><option value="">Seleccionar</option><option value="hombre">Hombre</option><option value="mujer">Mujer</option><option value="otro">Otro</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Edad</label><input type="number" id="uAge" class="form-input" placeholder="25" min="14" max="80"></div>
+          <div class="form-group"><label class="form-label">Peso (kg)</label><input type="number" id="uWeight" class="form-input" placeholder="70" step="0.5"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Altura (cm)</label><input type="number" id="uHeight" class="form-input" placeholder="175"></div>
+          <div class="form-group"><label class="form-label">Nivel</label>
+            <select id="uLevel" class="form-select"><option value="inicial">Inicial</option><option value="intermedio">Intermedio</option><option value="avanzado">Avanzado</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Objetivo</label>
+            <select id="uObjective" class="form-select"><option value="volumen">Volumen muscular</option><option value="fuerza">Fuerza</option><option value="definicion">Definición</option><option value="resistencia">Resistencia</option><option value="hipertrofia">Hipertrofia</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Rutina asignada</label>
+            <select id="uRoutine" class="form-select"><option value="">Sin rutina</option></select>
+          </div>
+        </div>
+        <div id="modalError" class="alert alert-error" style="display:none"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveUser()" id="saveBtn"><i class="fas fa-save"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="confirm-overlay" id="confirmDelete">
+  <div class="confirm-box">
+    <i class="fas fa-trash-alt"></i>
+    <h3>Eliminar usuario</h3>
+    <p>¿Estás seguro? Esta acción no se puede deshacer.</p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmDeleteUser()" id="confirmBtn">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script src="app.js"></script>
+<script>
+let allUsers = [];
+let editingId = null;
+let deletingId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  VG.init();
+  VG.guard();
+  VG.adminGuard();
+  const u = VG.me();
+  const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('topbarAvatar').textContent = initials;
+  document.getElementById('sidebarUser').innerHTML = `
+    <div class="sidebar-user-avatar">${initials}</div>
+    <div class="sidebar-user-info"><div class="sidebar-user-name">${u.name}</div><div class="sidebar-user-role">Administrador</div></div>`;
+
+  // Populate routine select
+  const routineSelect = document.getElementById('uRoutine');
+  VG.routines().forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id; opt.textContent = r.name;
+    routineSelect.appendChild(opt);
+  });
+
+  loadUsers();
+});
+
+function loadUsers() {
+  allUsers = VG.users().filter(u => u.role !== 'admin');
+  document.getElementById('userCount').textContent = `${allUsers.length} usuarios registrados`;
+  renderTable(allUsers);
+}
+
+function renderTable(users) {
+  const tbody = document.getElementById('usersTable');
+  tbody.innerHTML = '';
+  document.getElementById('emptyUsers').style.display = users.length ? 'none' : 'block';
+  users.forEach(u => {
+    const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const sessions = VG.userSessions(u.id);
+    const routine = u.routineId ? VG.getRoutine(u.routineId) : null;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="avatar-sm">${initials}</div>
+        <div><div class="table-name">${u.name}</div><div style="font-size:0.75rem;color:var(--text-4)">${u.email}</div></div>
+      </div></td>
+      <td><span class="badge badge-gray">${VG.levelLabel(u.level)||'—'}</span></td>
+      <td style="font-size:0.82rem;color:var(--text-3)">${VG.objLabel(u.objective)||'—'}</td>
+      <td style="font-size:0.82rem;color:var(--text-3)">${routine
+        ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> ${routine.name.slice(0,25)}${routine.name.length>25?'…':''}</span>`
+        : '<span style="color:var(--text-4)"><i class="fas fa-times-circle"></i> Sin asignar</span>'}</td>
+      <td><span style="font-family:var(--font-head);font-size:1.1rem;color:var(--text-1)">${sessions.length}</span></td>
+      <td style="font-size:0.8rem;color:var(--text-3)">${VG.fmtDate(u.createdAt)}</td>
+      <td><div class="table-actions">
+        <button class="btn btn-icon btn-ghost btn-sm" title="Editar" onclick="openEditModal('${u.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-icon btn-sm" style="background:var(--danger-bg);color:var(--danger);border:none" title="Eliminar" onclick="openDelete('${u.id}')"><i class="fas fa-trash-alt"></i></button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterUsers() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const level = document.getElementById('levelFilter').value;
+  const routineF = document.getElementById('routineFilter').value;
+  const filtered = allUsers.filter(u => {
+    const matchQ = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+    const matchL = !level || u.level === level;
+    const matchR = !routineF || (routineF==='assigned'?!!u.routineId:!u.routineId);
+    return matchQ && matchL && matchR;
+  });
+  renderTable(filtered);
+}
+
+function openCreateModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Nuevo usuario';
+  document.getElementById('editUserId').value = '';
+  ['uName','uEmail','uPassword','uAge','uWeight','uHeight'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('uGender').value='';
+  document.getElementById('uLevel').value='inicial';
+  document.getElementById('uObjective').value='volumen';
+  document.getElementById('uRoutine').value='';
+  document.getElementById('modalError').style.display='none';
+  document.getElementById('userModal').classList.add('open');
+}
+
+function openEditModal(id) {
+  const u = VG.getUser(id);
+  if (!u) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Editar usuario';
+  document.getElementById('uName').value = u.name||'';
+  document.getElementById('uEmail').value = u.email||'';
+  document.getElementById('uPassword').value = '';
+  document.getElementById('uAge').value = u.age||'';
+  document.getElementById('uGender').value = u.gender||'';
+  document.getElementById('uWeight').value = u.weight||'';
+  document.getElementById('uHeight').value = u.height||'';
+  document.getElementById('uLevel').value = u.level||'inicial';
+  document.getElementById('uObjective').value = u.objective||'volumen';
+  document.getElementById('uRoutine').value = u.routineId||'';
+  document.getElementById('modalError').style.display='none';
+  document.getElementById('userModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('userModal').classList.remove('open'); }
+
+function saveUser() {
+  const name = document.getElementById('uName').value.trim();
+  const email = document.getElementById('uEmail').value.trim();
+  const pw = document.getElementById('uPassword').value;
+  if (!name || !email) return showModalError('El nombre y email son obligatorios.');
+  if (!editingId && !pw) return showModalError('La contraseña es obligatoria para nuevos usuarios.');
+
+  const data = {
+    name, email,
+    age: parseInt(document.getElementById('uAge').value)||undefined,
+    gender: document.getElementById('uGender').value||undefined,
+    weight: parseFloat(document.getElementById('uWeight').value)||undefined,
+    height: parseFloat(document.getElementById('uHeight').value)||undefined,
+    level: document.getElementById('uLevel').value,
+    objective: document.getElementById('uObjective').value,
+    routineId: document.getElementById('uRoutine').value||null,
+  };
+  if (pw) data.password = pw;
+
+  if (editingId) {
+    VG.saveUser(editingId, data);
+    showToast('Usuario actualizado correctamente.');
+  } else {
+    const res = VG.createUser(data);
+    if (!res.ok) return showModalError(res.err);
+    showToast('Usuario creado correctamente.');
+  }
+  closeModal();
+  loadUsers();
+}
+
+function showModalError(msg) {
+  const el = document.getElementById('modalError');
+  el.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+  el.style.display='flex';
+}
+
+function openDelete(id) {
+  deletingId = id;
+  document.getElementById('confirmDelete').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirmDelete').classList.remove('open'); }
+function confirmDeleteUser() {
+  if (!deletingId) return;
+  VG.deleteUser(deletingId);
+  closeConfirm();
+  loadUsers();
+  showToast('Usuario eliminado.');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show','success');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+</script>
+</body>
+</html>

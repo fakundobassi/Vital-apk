@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil – Vital Gym</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="img/transparent-Photoroom.png" alt="Vital Gym"></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a href="dashboard-usuario.html" class="nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="rutina-activa.html" class="nav-item"><i class="fas fa-dumbbell"></i><span>Mi Rutina</span></a>
+      <a href="progreso.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Progreso</span></a>
+      <div class="nav-divider"></div>
+      <a href="perfil.html" class="nav-item active"><i class="fas fa-user"></i><span>Mi Perfil</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebarUser"></div>
+      <button class="btn-logout" onclick="VG.logout()"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+        <span class="topbar-title">MI PERFIL</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-avatar" id="topbarAvatar"></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <!-- PROFILE HEADER -->
+      <div class="card section-gap fade-in" style="background:linear-gradient(135deg,var(--bg-2),var(--bg-3))">
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+          <div class="avatar-xl" id="profileAvatar"></div>
+          <div style="flex:1">
+            <h2 style="font-family:var(--font-head);font-size:2rem;color:var(--text-1);letter-spacing:1px" id="profileName"></h2>
+            <p style="color:var(--text-3);font-size:0.85rem" id="profileEmail"></p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px" id="profileBadges"></div>
+          </div>
+          <button class="btn btn-outline-red" onclick="toggleEdit(true)"><i class="fas fa-edit"></i> Editar perfil</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px" id="mainGrid">
+
+        <!-- LEFT: EDIT FORM / STATS -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- VIEW MODE -->
+          <div class="card fade-in" id="viewMode">
+            <div class="card-title mb-16"><i class="fas fa-id-card" style="color:var(--primary)"></i> Información personal</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="infoGrid"></div>
+          </div>
+
+          <!-- EDIT MODE -->
+          <div class="card fade-in" id="editMode" style="display:none">
+            <div class="card-title mb-16"><i class="fas fa-edit" style="color:var(--primary)"></i> Editar información</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nombre completo</label>
+                  <input type="text" id="editName" class="form-input" placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" id="editEmail" class="form-input" placeholder="tu@email.com">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Edad</label>
+                  <input type="number" id="editAge" class="form-input" placeholder="25" min="14" max="80">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Género</label>
+                  <select id="editGender" class="form-select">
+                    <option value="">Seleccionar</option>
+                    <option value="hombre">Hombre</option>
+                    <option value="mujer">Mujer</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Peso (kg)</label>
+                  <input type="number" id="editWeight" class="form-input" placeholder="70" step="0.5">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Altura (cm)</label>
+                  <input type="number" id="editHeight" class="form-input" placeholder="175">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nivel</label>
+                  <select id="editLevel" class="form-select">
+                    <option value="inicial">Inicial</option>
+                    <option value="intermedio">Intermedio</option>
+                    <option value="avanzado">Avanzado</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Objetivo</label>
+                  <select id="editObjective" class="form-select">
+                    <option value="volumen">Volumen muscular</option>
+                    <option value="fuerza">Fuerza</option>
+                    <option value="definicion">Definición</option>
+                    <option value="resistencia">Resistencia</option>
+                    <option value="hipertrofia">Hipertrofia</option>
+                  </select>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="form-group">
+                <label class="form-label">Nueva contraseña (dejá en blanco para no cambiar)</label>
+                <input type="password" id="editPassword" class="form-input" placeholder="Nueva contraseña">
+              </div>
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-outline" onclick="toggleEdit(false)">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveProfile()"><i class="fas fa-save"></i> Guardar cambios</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROUTINE INFO -->
+          <div class="card fade-in delay-1" id="routineCard">
+            <div class="card-title mb-16"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Mi rutina asignada</div>
+            <div id="routineInfo"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: STATS -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <div class="card fade-in delay-1">
+            <div class="card-title mb-16">Mis estadísticas</div>
+            <div style="display:flex;flex-direction:column;gap:16px" id="statsPanel"></div>
+          </div>
+
+          <!-- BMI -->
+          <div class="card fade-in delay-2" id="bmiCard" style="display:none">
+            <div class="card-title mb-12">Índice de masa corporal</div>
+            <div style="text-align:center;padding:16px 0">
+              <div style="font-family:var(--font-head);font-size:3rem;color:var(--primary)" id="bmiValue">—</div>
+              <div style="font-size:0.82rem;color:var(--text-3);margin-top:4px" id="bmiLabel">IMC</div>
+            </div>
+            <div class="progress-bar-container" style="margin-bottom:8px">
+              <div class="progress-bar-fill" id="bmiBar" style="width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-4)">
+              <span>Bajo peso</span><span>Normal</span><span>Sobrepeso</span>
+            </div>
+          </div>
+
+          <!-- MEMBER SINCE -->
+          <div class="card fade-in delay-3">
+            <div class="card-title mb-16">Membresía</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bg-3);border-radius:8px">
+                <span style="font-size:0.82rem;color:var(--text-3)"><i class="fas fa-calendar-check" style="color:var(--success);margin-right:8px"></i>Miembro desde</span>
+                <span style="font-size:0.82rem;color:var(--text-2)" id="memberSince">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bg-3);border-radius:8px">
+                <span style="font-size:0.82rem;color:var(--text-3)"><i class="fas fa-fire" style="color:var(--primary);margin-right:8px"></i>Racha actual</span>
+                <span style="font-weight:600;color:var(--primary)" id="streakBadge">0 días</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bg-3);border-radius:8px">
+                <span style="font-size:0.82rem;color:var(--text-3)"><i class="fas fa-shield-alt" style="color:var(--info);margin-right:8px"></i>Estado</span>
+                <span class="badge badge-green">Activo</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="dashboard-usuario.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="rutina-activa.html" class="bottom-nav-item"><i class="fas fa-dumbbell"></i><span>Rutina</span></a>
+      <a href="progreso.html" class="bottom-nav-item"><i class="fas fa-chart-line"></i><span>Progreso</span></a>
+      <a href="perfil.html" class="bottom-nav-item active"><i class="fas fa-user"></i><span>Perfil</span></a>
+    </div>
+  </nav>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script src="app.js"></script>
+<script>
+let currentUser = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  VG.init();
+  VG.guard();
+  currentUser = VG.me();
+  if (currentUser.role === 'admin') return location.href = 'dashboard-admin.html';
+  renderProfile();
+});
+
+function renderProfile() {
+  const u = currentUser;
+  const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  document.getElementById('topbarAvatar').textContent = initials;
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileName').textContent = u.name;
+  document.getElementById('profileEmail').textContent = u.email;
+  document.getElementById('sidebarUser').innerHTML = `
+    <div class="sidebar-user-avatar">${initials}</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name">${u.name}</div>
+      <div class="sidebar-user-role">${VG.levelLabel(u.level)||'Miembro'}</div>
+    </div>`;
+
+  document.getElementById('profileBadges').innerHTML = `
+    <span class="badge badge-red">${VG.levelLabel(u.level)||'—'}</span>
+    <span class="badge badge-gray">${VG.objLabel(u.objective)||'—'}</span>
+    <span class="badge badge-green"><i class="fas fa-circle" style="font-size:0.5em"></i> Activo</span>`;
+
+  // Info grid
+  const fields = [
+    { icon:'fa-user', label:'Nombre', val: u.name },
+    { icon:'fa-envelope', label:'Email', val: u.email },
+    { icon:'fa-birthday-cake', label:'Edad', val: u.age ? u.age+' años' : '—' },
+    { icon:'fa-venus-mars', label:'Género', val: u.gender || '—' },
+    { icon:'fa-weight', label:'Peso', val: u.weight ? u.weight+' kg' : '—' },
+    { icon:'fa-ruler-vertical', label:'Altura', val: u.height ? u.height+' cm' : '—' },
+    { icon:'fa-signal', label:'Nivel', val: VG.levelLabel(u.level)||'—' },
+    { icon:'fa-crosshairs', label:'Objetivo', val: VG.objLabel(u.objective)||'—' },
+  ];
+  document.getElementById('infoGrid').innerHTML = fields.map(f => `
+    <div style="background:var(--bg-3);padding:14px;border-radius:8px">
+      <div style="font-size:0.72rem;color:var(--text-4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">
+        <i class="fas ${f.icon}" style="color:var(--primary);margin-right:6px"></i>${f.label}
+      </div>
+      <div style="font-size:0.9rem;color:var(--text-1);font-weight:500">${f.val}</div>
+    </div>`).join('');
+
+  // Edit form pre-fill
+  document.getElementById('editName').value = u.name || '';
+  document.getElementById('editEmail').value = u.email || '';
+  document.getElementById('editAge').value = u.age || '';
+  document.getElementById('editGender').value = u.gender || '';
+  document.getElementById('editWeight').value = u.weight || '';
+  document.getElementById('editHeight').value = u.height || '';
+  document.getElementById('editLevel').value = u.level || 'inicial';
+  document.getElementById('editObjective').value = u.objective || 'volumen';
+
+  // Stats
+  const sessions = VG.userSessions(u.id);
+  const totalMins = sessions.reduce((a,s)=>a+(s.duration||0),0);
+  document.getElementById('statsPanel').innerHTML = [
+    { icon:'fa-dumbbell', label:'Entrenamientos', val: sessions.length, color:'var(--primary)' },
+    { icon:'fa-clock', label:'Horas entrenadas', val: Math.round(totalMins/60)+'h', color:'var(--info)' },
+    { icon:'fa-fire', label:'Días de racha', val: (u.streak||0)+' días', color:'var(--warning)' },
+  ].map(s => `
+    <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--bg-3);border-radius:8px">
+      <div style="width:40px;height:40px;border-radius:10px;background:${s.color}20;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas ${s.icon}" style="color:${s.color}"></i>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:1.4rem;color:var(--text-1)">${s.val}</div>
+        <div style="font-size:0.75rem;color:var(--text-3)">${s.label}</div>
+      </div>
+    </div>`).join('');
+
+  // BMI
+  if (u.weight && u.height) {
+    const bmi = u.weight / Math.pow(u.height/100, 2);
+    const bmiRounded = bmi.toFixed(1);
+    const bmiLabel = bmi < 18.5 ? 'Bajo peso' : bmi < 25 ? 'Peso normal ✓' : bmi < 30 ? 'Sobrepeso' : 'Obesidad';
+    const bmiPct = Math.min(Math.max((bmi-15)/25*100, 5), 95);
+    const bmiColor = bmi < 18.5 ? 'var(--info)' : bmi < 25 ? 'var(--success)' : bmi < 30 ? 'var(--warning)' : 'var(--danger)';
+    document.getElementById('bmiCard').style.display = 'block';
+    document.getElementById('bmiValue').textContent = bmiRounded;
+    document.getElementById('bmiLabel').textContent = bmiLabel;
+    document.getElementById('bmiBar').style.width = bmiPct+'%';
+    document.getElementById('bmiBar').style.background = bmiColor;
+  }
+
+  // Member since
+  document.getElementById('memberSince').textContent = VG.fmtDate(u.createdAt) || '—';
+  document.getElementById('streakBadge').textContent = (u.streak||0)+' días';
+
+  // Routine
+  const routine = u.routineId ? VG.getRoutine(u.routineId) : null;
+  document.getElementById('routineInfo').innerHTML = routine ? `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="flex:1">
+        <div style="font-weight:600;color:var(--text-1)">${routine.name}</div>
+        <div style="font-size:0.78rem;color:var(--text-3);margin-top:4px">${routine.days.length} días · ${VG.levelLabel(routine.level)} · ${VG.objLabel(routine.objective)}</div>
+      </div>
+      <a href="rutina-activa.html" class="btn btn-primary btn-sm"><i class="fas fa-play"></i> Ir a rutina</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      ${routine.days.map(d=>`<span class="tag"><i class="fas fa-calendar-day" style="margin-right:4px;color:var(--primary)"></i>${d.name}</span>`).join('')}
+    </div>` :
+    `<div class="empty-state"><i class="fas fa-clipboard-list"></i><h3>Sin rutina asignada</h3><p>Tu instructor configurará tu plan de entrenamiento.</p></div>`;
+
+  if (window.innerWidth < 900) document.getElementById('mainGrid').style.gridTemplateColumns = '1fr';
+}
+
+function toggleEdit(show) {
+  document.getElementById('viewMode').style.display = show ? 'none' : 'block';
+  document.getElementById('editMode').style.display = show ? 'block' : 'none';
+}
+
+function saveProfile() {
+  const patch = {
+    name: document.getElementById('editName').value.trim() || currentUser.name,
+    email: document.getElementById('editEmail').value.trim() || currentUser.email,
+    age: parseInt(document.getElementById('editAge').value) || currentUser.age,
+    gender: document.getElementById('editGender').value || currentUser.gender,
+    weight: parseFloat(document.getElementById('editWeight').value) || currentUser.weight,
+    height: parseFloat(document.getElementById('editHeight').value) || currentUser.height,
+    level: document.getElementById('editLevel').value,
+    objective: document.getElementById('editObjective').value,
+  };
+  const pw = document.getElementById('editPassword').value;
+  if (pw) patch.password = pw;
+  VG.saveUser(currentUser.id, patch);
+  currentUser = VG.me();
+  toggleEdit(false);
+  renderProfile();
+  showToast('Perfil actualizado correctamente.');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show','success');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+</script>
+</body>
+</html>

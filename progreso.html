@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Progreso – Vital Gym</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="img/transparent-Photoroom.png" alt="Vital Gym"></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a href="dashboard-usuario.html" class="nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="rutina-activa.html" class="nav-item"><i class="fas fa-dumbbell"></i><span>Mi Rutina</span></a>
+      <a href="progreso.html" class="nav-item active"><i class="fas fa-chart-line"></i><span>Progreso</span></a>
+      <div class="nav-divider"></div>
+      <a href="perfil.html" class="nav-item"><i class="fas fa-user"></i><span>Mi Perfil</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebarUser"></div>
+      <button class="btn-logout" onclick="VG.logout()"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+        <span class="topbar-title">MI PROGRESO</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-avatar" id="topbarAvatar"></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <div class="section-gap fade-in">
+        <h2 style="font-family:var(--font-head);font-size:2rem;color:var(--text-1);letter-spacing:1px">MI PROGRESO</h2>
+        <p style="color:var(--text-3);margin-top:4px;font-size:0.85rem">Seguimiento de tu actividad y evolución</p>
+      </div>
+
+      <!-- TOP STATS -->
+      <div class="grid-4 section-gap">
+        <div class="stat-card fade-in delay-1">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-dumbbell"></i></div>
+          <div class="stat-card-value" id="s1">0</div>
+          <div class="stat-card-label">Sesiones totales</div>
+        </div>
+        <div class="stat-card fade-in delay-2">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-card-value" id="s2">0h</div>
+          <div class="stat-card-label">Horas entrenadas</div>
+        </div>
+        <div class="stat-card fade-in delay-3">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-fire"></i></div>
+          <div class="stat-card-value" id="s3">0</div>
+          <div class="stat-card-label">Racha máxima</div>
+        </div>
+        <div class="stat-card fade-in delay-4">
+          <div class="stat-card-accent"></div>
+          <div class="stat-card-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-card-value" id="s4">0</div>
+          <div class="stat-card-label">Esta semana</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:20px" id="mainGrid">
+
+        <!-- LEFT -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- MONTHLY CHART -->
+          <div class="card fade-in">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Actividad – Últimas 4 semanas</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin-bottom:8px" id="monthChart"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px" id="monthLabels"></div>
+          </div>
+
+          <!-- SESSION HISTORY -->
+          <div class="card fade-in delay-1">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-history" style="color:var(--primary)"></i> Historial de sesiones</div>
+            </div>
+            <div id="sessionHistory"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- CONSISTENCY -->
+          <div class="card fade-in delay-1">
+            <div class="card-title mb-16">Consistencia semanal</div>
+            <div id="consistencyGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text-4)">
+              <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.76rem;color:var(--text-3)">
+              <div style="width:12px;height:12px;border-radius:2px;background:var(--bg-4)"></div> Sin sesión
+              <div style="width:12px;height:12px;border-radius:2px;background:var(--primary)"></div> Con sesión
+            </div>
+          </div>
+
+          <!-- ACHIEVEMENTS PROGRESS -->
+          <div class="card fade-in delay-2">
+            <div class="card-title mb-16"><i class="fas fa-trophy" style="color:var(--warning)"></i> Logros</div>
+            <div id="achievementsPanel" style="display:flex;flex-direction:column;gap:12px"></div>
+          </div>
+
+          <!-- ROUTINE PROGRESS -->
+          <div class="card fade-in delay-3">
+            <div class="card-title mb-16"><i class="fas fa-clipboard-list" style="color:var(--primary)"></i> Mi rutina</div>
+            <div id="routineProgress"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="dashboard-usuario.html" class="bottom-nav-item"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="rutina-activa.html" class="bottom-nav-item"><i class="fas fa-dumbbell"></i><span>Rutina</span></a>
+      <a href="progreso.html" class="bottom-nav-item active"><i class="fas fa-chart-line"></i><span>Progreso</span></a>
+      <a href="perfil.html" class="bottom-nav-item"><i class="fas fa-user"></i><span>Perfil</span></a>
+    </div>
+  </nav>
+</div>
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  VG.init();
+  VG.guard();
+  const u = VG.me();
+  if (u.role === 'admin') return location.href = 'dashboard-admin.html';
+
+  const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('topbarAvatar').textContent = initials;
+  document.getElementById('sidebarUser').innerHTML = `
+    <div class="sidebar-user-avatar">${initials}</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name">${u.name}</div>
+      <div class="sidebar-user-role">${VG.levelLabel(u.level)||'Miembro'}</div>
+    </div>`;
+
+  const sessions = VG.userSessions(u.id).sort((a,b) => new Date(b.date)-new Date(a.date));
+  const totalMins = sessions.reduce((a,s)=>a+(s.duration||0),0);
+  const now = new Date();
+  const weekStart = new Date(now); weekStart.setDate(now.getDate()-now.getDay()+1); weekStart.setHours(0,0,0,0);
+  const weekSessions = sessions.filter(s=>new Date(s.date)>=weekStart);
+
+  document.getElementById('s1').textContent = sessions.length;
+  document.getElementById('s2').textContent = Math.round(totalMins/60)+'h';
+  document.getElementById('s3').textContent = (u.streak||0)+' días';
+  document.getElementById('s4').textContent = weekSessions.length;
+
+  // Month chart (last 28 days by week)
+  const weeks = [0,0,0,0];
+  const weekLabels = [];
+  for (let w=3; w>=0; w--) {
+    const wStart = new Date(now); wStart.setDate(now.getDate() - now.getDay() - w*7 + 1); wStart.setHours(0,0,0,0);
+    const wEnd = new Date(wStart); wEnd.setDate(wStart.getDate()+7);
+    weeks[3-w] = sessions.filter(s=>{const d=new Date(s.date);return d>=wStart&&d<wEnd;}).length;
+    weekLabels.push(`Sem ${4-w}`);
+  }
+  const maxW = Math.max(...weeks, 1);
+  document.getElementById('monthChart').innerHTML = weeks.map((v,i)=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px">
+      <span style="font-family:var(--font-head);font-size:0.9rem;color:${v>0?'var(--text-1)':'var(--text-4)'}">${v}</span>
+      <div style="width:100%;background:${v>0?'var(--primary)':'var(--bg-4)'};border-radius:6px 6px 0 0;height:${Math.round(v/maxW*90)+10}px;transition:height 0.5s ease"></div>
+    </div>`).join('');
+  document.getElementById('monthLabels').innerHTML = weekLabels.map(l=>`<span style="flex:1;font-size:0.72rem;color:var(--text-4);text-align:center">${l}</span>`).join('');
+
+  // Session history
+  const hist = document.getElementById('sessionHistory');
+  if (!sessions.length) {
+    hist.innerHTML = `<div class="empty-state"><i class="fas fa-clipboard"></i><h3>Sin sesiones aún</h3><p>Completá tu primera sesión de entrenamiento para verla aquí.</p><a href="rutina-activa.html" class="btn btn-primary mt-12"><i class="fas fa-play"></i> Ir a mi rutina</a></div>`;
+  } else {
+    hist.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">` +
+      sessions.slice(0,10).map(s => {
+        const routine = VG.getRoutine(s.routineId);
+        const day = routine?.days?.find(d=>d.id===s.dayId);
+        return `<div style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--bg-3);border-radius:8px;border:1px solid var(--border)">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--primary-glow);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fas fa-dumbbell" style="color:var(--primary)"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:500;color:var(--text-1);font-size:0.88rem">${day?.name||'Entrenamiento'}</div>
+            <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px">${VG.fmtDate(s.date)}${s.duration?' · '+s.duration+' min':''}</div>
+          </div>
+          <span class="badge ${s.completed?'badge-green':'badge-yellow'}">${s.completed?'✓ Completada':'En prog.'}</span>
+        </div>`;
+      }).join('') + '</div>';
+  }
+
+  // Consistency grid (last 4 weeks = 28 days)
+  const grid = document.getElementById('consistencyGrid');
+  const sessionDates = new Set(sessions.map(s=>s.date));
+  let gridHTML = '';
+  for (let i=27; i>=0; i--) {
+    const d = new Date(now); d.setDate(now.getDate()-i);
+    const dateStr = d.toISOString().split('T')[0];
+    const has = sessionDates.has(dateStr);
+    gridHTML += `<div title="${dateStr}" style="height:12px;border-radius:2px;background:${has?'var(--primary)':'var(--bg-4)'}"></div>`;
+  }
+  grid.innerHTML = gridHTML;
+
+  // Achievements
+  const achievements = [
+    { icon:'🏆', name:'Primera sesión', done: sessions.length>=1, total:1, current: Math.min(sessions.length,1) },
+    { icon:'🔥', name:'Racha de 5 días', done:(u.streak||0)>=5, total:5, current:Math.min(u.streak||0,5) },
+    { icon:'💪', name:'10 entrenamientos', done:sessions.length>=10, total:10, current:Math.min(sessions.length,10) },
+    { icon:'⚡', name:'25 entrenamientos', done:sessions.length>=25, total:25, current:Math.min(sessions.length,25) },
+    { icon:'🦁', name:'Racha de 30 días', done:(u.streak||0)>=30, total:30, current:Math.min(u.streak||0,30) },
+  ];
+  document.getElementById('achievementsPanel').innerHTML = achievements.map(a=>`
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">${a.icon}</span>
+        <span style="font-size:0.82rem;font-weight:500;color:${a.done?'var(--text-1)':'var(--text-3)'}">${a.name}</span>
+        ${a.done?'<span class="badge badge-green" style="margin-left:auto">✓</span>':'<span style="font-size:0.72rem;color:var(--text-4);margin-left:auto">${a.current}/${a.total}</span>'}
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill${a.done?' green':''}" style="width:${Math.round(a.current/a.total*100)}%"></div>
+      </div>
+    </div>`).join('');
+
+  // Routine progress
+  const routine = u.routineId ? VG.getRoutine(u.routineId) : null;
+  const rp = document.getElementById('routineProgress');
+  if (routine) {
+    const completedDays = sessions.length % routine.days.length;
+    rp.innerHTML = `
+      <div style="font-weight:500;color:var(--text-1);margin-bottom:8px">${routine.name}</div>
+      <div style="font-size:0.78rem;color:var(--text-3);margin-bottom:12px">${routine.days.length} días · Ciclo actual: Día ${completedDays+1}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${routine.days.map((d,i)=>`
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:24px;height:24px;border-radius:50%;background:${i<completedDays?'var(--success)':i===completedDays?'var(--primary)':'var(--bg-4)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <i class="fas ${i<completedDays?'fa-check':i===completedDays?'fa-bolt':'fa-circle'}" style="font-size:0.6rem;color:#fff"></i>
+            </div>
+            <span style="font-size:0.8rem;color:${i<=completedDays?'var(--text-2)':'var(--text-4)'}">${d.name}</span>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    rp.innerHTML = `<div class="empty-state" style="padding:24px"><i class="fas fa-clipboard-list"></i><p>Sin rutina asignada</p></div>`;
+  }
+
+  if (window.innerWidth<900) document.getElementById('mainGrid').style.gridTemplateColumns='1fr';
+});
+
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+</script>
+</body>
+</html>
