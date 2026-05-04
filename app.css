@@ -65,7 +65,7 @@ ul { list-style: none; }
   position: fixed;
   top: 0; left: 0; bottom: 0;
   display: flex; flex-direction: column;
-  z-index: 100;
+  z-index: 110;
   transition: transform var(--transition);
 }
 .sidebar-brand {
@@ -91,7 +91,7 @@ ul { list-style: none; }
 .nav-divider { height: 1px; background: var(--border); margin: 8px 16px; }
 .nav-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-4); padding: 8px 20px 4px; }
 .sidebar-footer {
-  padding: 16px;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border);
 }
 .sidebar-user {
@@ -141,7 +141,7 @@ ul { list-style: none; }
 }
 .sidebar-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6); z-index: 99;
+  background: rgba(0,0,0,0.6); z-index: 105;
 }
 
 /* ─── BOTTOM NAV (mobile) ─── */
